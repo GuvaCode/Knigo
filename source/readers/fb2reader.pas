@@ -1,71 +1,72 @@
 unit fb2Reader;
-
 {$mode ObjFPC}{$H+}
 {$WARN 5093 off : function result variable of a managed type does not seem to be initialized}
 {$WARN 4045 off : Comparison might be always true due to range of constant and expression}
 {$WARN 2031 off : compiler switches are not supported in // styled comments}
-
 interface
 
 uses
-  Classes, SysUtils, raylib, math, LConvEncoding, ReaderTools;
+  Classes, SysUtils, raylib, Math, LConvEncoding, ReaderTools;
 
 const
-
-  PADDING_Y    = 26;
+  PADDING_Y = 26;
 
 type
-  TElementType = (etParagraph, etTitle, etSubtitle, etImage, etEmptyLine, etVerse, etEmphasis, etCover);
+  TElementType = (etParagraph, etTitle, etSubtitle, etImage, etEmptyLine,
+    etVerse, etEmphasis, etCover);
 
   TFB2Element = record
-    ElemType    : TElementType;
-    Text        : string;
-    Indent      : Integer;
-    ImageTex    : TTexture2D;
-    ImageLoaded : Boolean;
-    ImgW, ImgH  : Integer;
+    ElemType: TElementType;
+    Text: string;
+    Indent: integer;
+    ImageTex: TTexture2D;
+    ImageLoaded: boolean;
+    ImgW, ImgH: integer;
   end;
-
   TFB2ElementArray = array of TFB2Element;
 
+  // ИСПРАВЛЕНИЕ 1: Добавлено поле LineHeight для надежного расчета отступов
   TLayoutLine = record
-    Text    : string;
-    XPos    : Single;
-    YPos    : Single;
+    Text: string;
+    XPos: single;
+    YPos: single;
     ElemType: TElementType;
-    Spacing : Single;
+    Spacing: single;
+    LineHeight: single;
   end;
 
   TLayoutImage = record
-    Texture             : TTexture2D;
-    XPos, YPos          : Single;
-    Width, Height       : Single;
+    Texture: TTexture2D;
+    XPos, YPos: single;
+    Width, Height: single;
   end;
 
-  TFB2Chapter = record
-    Title  : string;
-    Level  : Integer;
-    StartY : Single;
+  TFb2Chapter = record
+    Title: string;
+    Level: integer;
+    StartY: single;
   end;
   TFB2ChapterArray = array of TFB2Chapter;
 
   TFB2Renderer = record
-    Elements  : TFB2ElementArray;
-    Lines     : array of TLayoutLine;
-    Images    : array of TLayoutImage;
-    Chapters  : TFB2ChapterArray;
-    Font      : TFont;
-    TitleFont : TFont;
-    SubtitleFont : TFont;
-    ScrollY   : Single;
-    MaxScroll : Single;
-    TotalHeight: Single;
-    Title     : string;
-    Author    : string;
+    Elements: TFB2ElementArray;
+    Lines: array of TLayoutLine;
+    Images: array of TLayoutImage;
+    Chapters: TFB2ChapterArray;
+    Font: TFont;
+    TitleFont: TFont;
+    SubtitleFont: TFont;
+    ScrollY: single;
+    MaxScroll: single;
+    TotalHeight: single;
+    Title: string;
+    Author: string;
   end;
 
-  TBinaryEntry = record Id, Data: string; end;
-  TBinaryList  = array of TBinaryEntry;
+  TBinaryEntry = record
+    Id, Data: string;
+  end;
+  TBinaryList = array of TBinaryEntry;
 
 type
   { TFB2Reader }
@@ -79,71 +80,68 @@ type
     FNormalColor, FTitleColor, FSubtitleColor, FVerseColor: TColorB;
     FSubtitleFontPath: string;
     FTitleFontPath: string;
-    FSCREEN_W: Integer;
-    FSCREEN_H: Integer;
-    FONT_SIZE: Integer;
-    LINE_HEIGHT: Single;
-    PADDING_X: Integer;
-    FAutoScroll: Boolean;
-    FAutoScrollSpeed: Single;
-    FSelectedChapterIndex: Integer; // 🔑 Индекс выбранной главы
+    FSCREEN_W: integer;
+    FSCREEN_H: integer;
+    FONT_SIZE: integer;
+    LINE_HEIGHT: single;
+    PADDING_X: integer;
+    FAutoScroll: boolean;
+    FAutoScrollSpeed: single;
+    FSelectedChapterIndex: integer;
     function GetChapters: TFB2ChapterArray;
-    function ParseInternal(const FileName: string; var Title_, Author_: string): TFB2ElementArray;
-    procedure LayoutInternal(Width: Integer);
-    function GetIsLoaded: Boolean;
-    function GetVisibleContentHeight: Single;
-    procedure SetPadding(AValue: Integer);
+    function ParseInternal(const FileName: string;
+      var Title_, Author_: string): TFB2ElementArray;
+    procedure LayoutInternal(Width: integer);
+    function GetIsLoaded: boolean;
+    function GetVisibleContentHeight: single;
+    procedure SetPadding(AValue: integer);
   public
     constructor Create;
     destructor Destroy; override;
-
-    function LoadBook(const FileName: string): Boolean;
+    function LoadBook(const FileName: string): boolean;
     function GetCoverImage: TTexture2D;
-    function GetAnnotation: PAnsiChar;
+    function GetAnnotation: pansichar;
     function GetNotes: TBookNoteArray;
-    function GetNotesCount: Integer;
-    procedure Draw(Width, Height: Integer);
-    procedure UpdateScroll(WheelDelta: Single; KeyUp, KeyDown, KeyPageUp, KeyPageDown: Boolean);
+    function GetNotesCount: integer;
+    procedure Draw(Width, Height: integer);
+    procedure UpdateScroll(WheelDelta: single;
+      KeyUp, KeyDown, KeyPageUp, KeyPageDown: boolean);
     procedure ReloadFonts;
     procedure InvertColors;
     procedure ReloadLayout;
-    procedure GoToChapter(ChapterIndex: Integer); // 🔑 Метод перехода к главе
-
-    property Title      : string  read FRenderer.Title;
-    property Author     : string  read FRenderer.Author;
-    property Chapters   : TFB2ChapterArray read GetChapters;
-    property ScrollY    : Single  read FRenderer.ScrollY write FRenderer.ScrollY;
-    property MaxScroll  : Single  read FRenderer.MaxScroll;
-    property TotalHeight: Single  read FRenderer.TotalHeight;
-    property IsLoaded   : Boolean read GetIsLoaded;
-    property AutoScrollEnabled: Boolean read FAutoScroll write FAutoScroll;
-    property AutoScrollSpeed: Single read FAutoScrollSpeed write FAutoScrollSpeed;
-
-    property NormalTextColor   : TColorB read FNormalColor   write FNormalColor;
-    property TitleTextColor    : TColorB read FTitleColor    write FTitleColor;
-    property SubtitleTextColor : TColorB read FSubtitleColor write FSubtitleColor;
-    property VerseTextColor    : TColorB read FVerseColor    write FVerseColor;
-
-    property TextSize: Integer read FONT_SIZE write FONT_SIZE;
-    property Padding: Integer read PADDING_X write SetPadding;//PADDING_X;
-    property BaseFontPath     : string read FBaseFontPath     write FBaseFontPath;
-    property TitleFontPath    : string read FTitleFontPath    write FTitleFontPath;
-    property SubtitleFontPath : string read FSubtitleFontPath write FSubtitleFontPath;
+    procedure GoToChapter(ChapterIndex: integer);
+    property Title: string read FRenderer.Title;
+    property Author: string read FRenderer.Author;
+    property Chapters: TFB2ChapterArray read GetChapters;
+    property ScrollY: single read FRenderer.ScrollY write FRenderer.ScrollY;
+    property MaxScroll: single read FRenderer.MaxScroll;
+    property TotalHeight: single read FRenderer.TotalHeight;
+    property IsLoaded: boolean read GetIsLoaded;
+    property AutoScrollEnabled: boolean read FAutoScroll write FAutoScroll;
+    property AutoScrollSpeed: single read FAutoScrollSpeed write FAutoScrollSpeed;
+    property NormalTextColor: TColorB read FNormalColor write FNormalColor;
+    property TitleTextColor: TColorB read FTitleColor write FTitleColor;
+    property SubtitleTextColor: TColorB read FSubtitleColor write FSubtitleColor;
+    property VerseTextColor: TColorB read FVerseColor write FVerseColor;
+    property TextSize: integer read FONT_SIZE write FONT_SIZE;
+    property Padding: integer read PADDING_X write SetPadding;
+    property BaseFontPath: string read FBaseFontPath write FBaseFontPath;
+    property TitleFontPath: string read FTitleFontPath write FTitleFontPath;
+    property SubtitleFontPath: string read FSubtitleFontPath write FSubtitleFontPath;
     property ProgressColorBack: TColorB read FProgressColorBack write FProgressColorBack;
-    property ProgressColor    : TColor  read FProgressColor    write FProgressColor;
+    property ProgressColor: TColor read FProgressColor write FProgressColor;
   end;
 
 implementation
 
 { TFB2Reader }
-
 constructor TFB2Reader.Create;
 begin
   inherited Create;
-  FNormalColor   := ColorCreate(60, 60, 70, 255);
-  FTitleColor    := ColorCreate(40, 40, 70, 255);
+  FNormalColor := ColorCreate(60, 60, 70, 255);
+  FTitleColor := ColorCreate(40, 40, 70, 255);
   FSubtitleColor := ColorCreate(80, 80, 90, 255);
-  FVerseColor    := ColorCreate(50, 50, 60, 255);
+  FVerseColor := ColorCreate(50, 50, 60, 255);
   FProgressColor := ColorCreate(153, 152, 157, 255);
   FProgressColorBack := ColorCreate(225, 225, 226, 200);
   FAutoScroll := False;
@@ -158,36 +156,36 @@ end;
 
 destructor TFB2Reader.Destroy;
 var
-  i: Integer;
+  i: integer;
 begin
   for i := 0 to Length(FRenderer.Images) - 1 do
-    if FRenderer.Images[i].Texture.id <> 0 then
-      UnloadTexture(FRenderer.Images[i].Texture);
+    if FRenderer.Images[i].Texture.id <> 0 then UnloadTexture(FRenderer.Images[i].Texture);
   if FRenderer.Font.texture.id <> 0 then UnloadFont(FRenderer.Font);
   if FRenderer.TitleFont.texture.id <> 0 then UnloadFont(FRenderer.TitleFont);
   if FRenderer.SubtitleFont.texture.id <> 0 then UnloadFont(FRenderer.SubtitleFont);
   inherited Destroy;
 end;
 
-function TFB2Reader.GetIsLoaded: Boolean;
+function TFB2Reader.GetIsLoaded: boolean;
 begin
   Result := Length(FRenderer.Elements) > 0;
 end;
 
-function TFB2Reader.GetVisibleContentHeight: Single;
+function TFB2Reader.GetVisibleContentHeight: single;
 begin
   Result := FSCREEN_H - PADDING_Y;
   if Result < LINE_HEIGHT then Result := LINE_HEIGHT;
 end;
 
-procedure TFB2Reader.SetPadding(AValue: Integer);
+procedure TFB2Reader.SetPadding(AValue: integer);
 begin
-  if PADDING_X=AValue then Exit;
-  if PADDING_X >=64 then
-  PADDING_X:=AValue else PADDING_X := 64;
+  if PADDING_X = AValue then Exit;
+  if PADDING_X >= 64 then PADDING_X := AValue
+  else
+    PADDING_X := 64;
 end;
 
-function TFB2Reader.LoadBook(const FileName: string): Boolean;
+function TFB2Reader.LoadBook(const FileName: string): boolean;
 begin
   Result := False;
   if not SysUtils.FileExists(FileName) then Exit;
@@ -202,7 +200,7 @@ end;
 
 function TFB2Reader.GetCoverImage: TTexture2D;
 var
-  i: Integer;
+  i: integer;
 begin
   Result.id := 0;
   if not IsLoaded then Exit;
@@ -210,8 +208,7 @@ begin
   begin
     if FRenderer.Elements[i].ElemType = etCover then
     begin
-      if FRenderer.Elements[i].ImageLoaded then
-        Result := FRenderer.Elements[i].ImageTex
+      if FRenderer.Elements[i].ImageLoaded then Result := FRenderer.Elements[i].ImageTex
       else
         Result.id := 0;
       Exit;
@@ -219,12 +216,12 @@ begin
   end;
 end;
 
-function TFB2Reader.GetAnnotation: PAnsiChar;
+function TFB2Reader.GetAnnotation: pansichar;
 var
   Content, RawTag, TagName: string;
   FS: TFileStream;
-  j, k: Integer;
-  InAnnotation: Boolean;
+  j, k: integer;
+  InAnnotation: boolean;
   AnnotationText: string;
 begin
   Result := nil;
@@ -252,10 +249,10 @@ begin
         begin
           k := Pos('>', Content, j);
           if k = 0 then Break;
-          RawTag := Trim(Copy(Content, j+1, k-j-1));
+          RawTag := Trim(Copy(Content, j + 1, k - j - 1));
           if Pos('/', RawTag) = 1 then
           begin
-            TagName := Trim(Copy(RawTag, 2, Length(RawTag)-1));
+            TagName := Trim(Copy(RawTag, 2, Length(RawTag) - 1));
             if TagName = 'annotation' then InAnnotation := False;
           end;
           j := k + 1;
@@ -264,7 +261,8 @@ begin
         begin
           k := j;
           while (k <= Length(Content)) and (Content[k] <> '<') do Inc(k);
-          if k > j then AnnotationText := AnnotationText + DecodeXMLEntities(Copy(Content, j, k - j));
+          if k > j then AnnotationText :=
+              AnnotationText + DecodeXMLEntities(Copy(Content, j, k - j));
           j := k;
         end;
       end;
@@ -289,8 +287,8 @@ function TFB2Reader.GetNotes: TBookNoteArray;
 var
   Content, RawTag, TagName, CurrentNoteId, CurrentNoteTitle, CurrentNoteText: string;
   FS: TFileStream;
-  i, j, k, NoteIndex, CurrentDepth: Integer;
-  InNotesBody, InSection, InNote, InTitle, InContentTag: Boolean;
+  i, j, k, NoteIndex, CurrentDepth: integer;
+  InNotesBody, InSection, InNote, InTitle, InContentTag: boolean;
 begin
   SetLength(Result, 0);
   if not SysUtils.FileExists(FFileName) then Exit;
@@ -310,12 +308,12 @@ begin
     begin
       if Content[i] = '<' then
       begin
-        if CompareText(Copy(Content, i+1, 4), 'body') = 0 then
+        if CompareText(Copy(Content, i + 1, 4), 'body') = 0 then
         begin
           k := Pos('>', Content, i);
           if k > i then
           begin
-            RawTag := Copy(Content, i+1, k-i-1);
+            RawTag := Copy(Content, i + 1, k - i - 1);
             if (Length(RawTag) > 0) and (RawTag[1] <> '/') and (RawTag[Length(RawTag)] <> '/') then
             begin
               if CompareText(GetAttrValue(RawTag, 'name'), 'notes') = 0 then
@@ -347,10 +345,10 @@ begin
       begin
         k := Pos('>', Content, i);
         if k = 0 then Break;
-        RawTag := Trim(Copy(Content, i+1, k-i-1));
+        RawTag := Trim(Copy(Content, i + 1, k - i - 1));
         if (Length(RawTag) > 0) and (RawTag[1] = '/') then
         begin
-          TagName := Trim(Copy(RawTag, 2, Length(RawTag)-1));
+          TagName := Trim(Copy(RawTag, 2, Length(RawTag) - 1));
           if TagName = 'section' then
           begin
             Dec(CurrentDepth);
@@ -425,7 +423,7 @@ begin
   end;
 end;
 
-function TFB2Reader.GetNotesCount: Integer;
+function TFB2Reader.GetNotesCount: integer;
 var
   Notes: TBookNoteArray;
 begin
@@ -433,14 +431,15 @@ begin
   Result := Length(Notes);
 end;
 
-function SnapToLine(Value, LineHeight: Single): Single;
+function SnapToLine(Value, LineHeight: single): single;
 begin
   Result := Round(Value / LineHeight) * LineHeight;
 end;
 
-procedure TFB2Reader.UpdateScroll(WheelDelta: Single; KeyUp, KeyDown, KeyPageUp, KeyPageDown: Boolean);
+procedure TFB2Reader.UpdateScroll(WheelDelta: single;
+  KeyUp, KeyDown, KeyPageUp, KeyPageDown: boolean);
 var
-  PageStep: Single;
+  PageStep: single;
 begin
   if not IsLoaded then Exit;
   if IsKeyPressed(KEY_SPACE) then FAutoScroll := not FAutoScroll;
@@ -455,12 +454,14 @@ begin
     if KeyUp or IsKeyDown(KEY_W) then FRenderer.ScrollY := FRenderer.ScrollY - LINE_HEIGHT;
     if KeyDown or IsKeyDown(KEY_S) then FRenderer.ScrollY := FRenderer.ScrollY + LINE_HEIGHT;
     PageStep := GetVisibleContentHeight;
-    if IsKeyPressed(KEY_PAGE_UP) then
-      FRenderer.ScrollY := SnapToLine(FRenderer.ScrollY - PageStep, LINE_HEIGHT);
+    if IsKeyPressed(KEY_PAGE_UP) then FRenderer.ScrollY :=
+        SnapToLine(FRenderer.ScrollY - PageStep, LINE_HEIGHT);
     if IsKeyReleased(KEY_PAGE_DOWN) then
       FRenderer.ScrollY := SnapToLine(FRenderer.ScrollY + PageStep, LINE_HEIGHT);
-    if IsKeyPressedRepeat(KEY_PAGE_UP) then FRenderer.ScrollY := FRenderer.ScrollY - PageStep;
-    if IsKeyPressedRepeat(KEY_PAGE_DOWN) then FRenderer.ScrollY := FRenderer.ScrollY + PageStep;
+    if IsKeyPressedRepeat(KEY_PAGE_UP) then FRenderer.ScrollY :=
+        FRenderer.ScrollY - PageStep;
+    if IsKeyPressedRepeat(KEY_PAGE_DOWN) then FRenderer.ScrollY :=
+        FRenderer.ScrollY + PageStep;
   end;
   if FRenderer.ScrollY < 0.0 then FRenderer.ScrollY := 0.0;
   if FRenderer.ScrollY > FRenderer.MaxScroll then FRenderer.ScrollY := FRenderer.MaxScroll;
@@ -473,20 +474,20 @@ begin
   FRenderer.SubtitleFont.texture.id := 0;
   LINE_HEIGHT := FONT_SIZE;
   if SysUtils.FileExists(BaseFontPath) then
-    LoadFontWithPreset(FRenderer.Font, FONT_SIZE, PAnsiChar(BaseFontPath), 3);
+    LoadFontWithPreset(FRenderer.Font, FONT_SIZE, pansichar(BaseFontPath), 3);
   if SysUtils.FileExists(TitleFontPath) then
-    LoadFontWithPreset(FRenderer.TitleFont, FONT_SIZE, PAnsiChar(TitleFontPath), 3);
+    LoadFontWithPreset(FRenderer.TitleFont, FONT_SIZE, pansichar(TitleFontPath), 3);
   if SysUtils.FileExists(SubtitleFontPath) then
-    LoadFontWithPreset(FRenderer.SubtitleFont, FONT_SIZE, PAnsiChar(SubtitleFontPath), 3);
+    LoadFontWithPreset(FRenderer.SubtitleFont, FONT_SIZE, pansichar(SubtitleFontPath), 3);
 end;
 
 procedure TFB2Reader.InvertColors;
 begin
-  NormalTextColor   := InvertColor(NormalTextColor);
-  TitleTextColor    := InvertColor(TitleTextColor);
+  NormalTextColor := InvertColor(NormalTextColor);
+  TitleTextColor := InvertColor(TitleTextColor);
   SubtitleTextColor := InvertColor(SubtitleTextColor);
-  VerseTextColor    := InvertColor(VerseTextColor);
-  ProgressColor     := InvertColor(ProgressColor);
+  VerseTextColor := InvertColor(VerseTextColor);
+  ProgressColor := InvertColor(ProgressColor);
   ProgressColorBack := InvertColor(ProgressColorBack);
 end;
 
@@ -495,8 +496,7 @@ begin
   LayoutInternal(FSCREEN_W);
 end;
 
-// 🔑 Метод перехода к главе (вызывать из ChaptersPanel)
-procedure TFB2Reader.GoToChapter(ChapterIndex: Integer);
+procedure TFB2Reader.GoToChapter(ChapterIndex: integer);
 begin
   if (ChapterIndex >= 0) and (ChapterIndex < Length(FRenderer.Chapters)) then
   begin
@@ -507,101 +507,94 @@ begin
   end;
 end;
 
-procedure TFB2Reader.Draw(Width, Height: Integer);
+// ИСПРАВЛЕНИЕ 2: Использование Line.LineHeight вместо глобального LINE_HEIGHT для отсечения
+procedure TFB2Reader.Draw(Width, Height: integer);
 var
-  i: Integer;
-  ScreenY, ImgScreenY: Single;
+  i: integer;
+  ScreenY, ImgScreenY: single;
   Line: TLayoutLine;
   Img: TLayoutImage;
   TxtColor: TColorB;
   SrcRect, DstRect: TRectangle;
-  VisibleH: Single;
+  VisibleH: single;
   CurrentFont: TFont;
-  FontSize, Spacing: Single;
-  Progress: Single;
-  BarH, BarY, FillW: Single;
-  OldMaxScroll, ScrollRatio: Single;
+  FontSize, Spacing: single;
+  Progress: single;
+  BarH, BarY, FillW: single;
+  OldMaxScroll, ScrollRatio: single;
+  PosVec: TVector2;
+  TextSize_: TVector2;
 begin
-  // === ОБРАБОТКА ИЗМЕНЕНИЯ РАЗМЕРА ОКНА ===
   if IsWindowResized then
   begin
-    // 🔑 Сохраняем относительную позицию прокрутки (0.0 .. 1.0)
     OldMaxScroll := FRenderer.MaxScroll;
     ScrollRatio := 0.0;
-    if OldMaxScroll > 0 then
-      ScrollRatio := FRenderer.ScrollY / OldMaxScroll;
-
-    // Обновляем размеры экрана
+    if OldMaxScroll > 0 then ScrollRatio := FRenderer.ScrollY / OldMaxScroll;
     FSCREEN_W := GetRenderWidth;
     FSCREEN_H := GetRenderHeight;
-
-    // Пересчитываем макет с новой шириной
     LayoutInternal(FSCREEN_W);
-
-    // 🔑 Восстанавливаем позицию: приоритет — выбранная глава
-    if (FSelectedChapterIndex >= 0) and (FSelectedChapterIndex < Length(FRenderer.Chapters)) then
-    begin
-      // Если была выбрана глава — прокручиваем к её НОВОЙ позиции
-      FRenderer.ScrollY := FRenderer.Chapters[FSelectedChapterIndex].StartY;
-    end
+    if (FSelectedChapterIndex >= 0) and (FSelectedChapterIndex <
+      Length(FRenderer.Chapters)) then
+      FRenderer.ScrollY := FRenderer.Chapters[FSelectedChapterIndex].StartY
     else
     begin
-      // Иначе — восстанавливаем относительную позицию
-      if FRenderer.MaxScroll > 0 then
-        FRenderer.ScrollY := ScrollRatio * FRenderer.MaxScroll
+      if FRenderer.MaxScroll > 0 then FRenderer.ScrollY := ScrollRatio * FRenderer.MaxScroll
       else
         FRenderer.ScrollY := 0;
     end;
-
-    // Ограничиваем прокрутку новыми границами
     if FRenderer.ScrollY < 0 then FRenderer.ScrollY := 0;
     if FRenderer.ScrollY > FRenderer.MaxScroll then FRenderer.ScrollY := FRenderer.MaxScroll;
   end;
-
   VisibleH := Height;
   BeginScissorMode(0, 0, Width, Trunc(VisibleH));
-
   for i := 0 to Length(FRenderer.Lines) - 1 do
   begin
     Line := FRenderer.Lines[i];
     ScreenY := Line.YPos - FRenderer.ScrollY;
-    if (ScreenY + LINE_HEIGHT > 0) and (ScreenY < Height) then
+
+    // ИСПОЛЬЗУЕМ Line.LineHeight для точного отсечения
+    if (ScreenY + Line.LineHeight > 0) and (ScreenY < Height) then
     begin
       case Line.ElemType of
         etTitle:
-          begin
-            CurrentFont := FRenderer.TitleFont;
-            FontSize := FONT_SIZE;
-            Spacing := 0.5;
-            TxtColor := FTitleColor;
-          end;
+        begin
+          CurrentFont := FRenderer.TitleFont;
+          FontSize := FONT_SIZE;
+          Spacing := 0.5;
+          TxtColor := FTitleColor;
+        end;
         etSubtitle:
-          begin
-            CurrentFont := FRenderer.SubtitleFont;
-            FontSize := FONT_SIZE;
-            Spacing := 0.5;
-            TxtColor := FSubtitleColor;
-          end;
+        begin
+          CurrentFont := FRenderer.SubtitleFont;
+          FontSize := FONT_SIZE;
+          Spacing := 0.5;
+          TxtColor := FSubtitleColor;
+        end;
         etVerse, etEmphasis:
-          begin
-            CurrentFont := FRenderer.SubtitleFont;
-            FontSize := FONT_SIZE;
-            Spacing := 0.5;
-            TxtColor := FVerseColor;
-          end;
+        begin
+          CurrentFont := FRenderer.SubtitleFont;
+          FontSize := FONT_SIZE;
+          Spacing := 0.5;
+          TxtColor := FVerseColor;
+        end;
         else
-          begin
-            CurrentFont := FRenderer.Font;
-            FontSize := FONT_SIZE;
-            Spacing := 0.5;
-            TxtColor := FNormalColor;
-          end;
+        begin
+          CurrentFont := FRenderer.Font;
+          FontSize := FONT_SIZE;
+          Spacing := 0.5;
+          TxtColor := FNormalColor;
+        end;
+      end;
+      PosVec := Vector2Create(Line.XPos, ScreenY);
+      if Line.ElemType in [etTitle, etSubtitle] then
+      begin
+        TextSize_ := MeasureTextEx(CurrentFont, pansichar(Line.Text), FontSize, Spacing);
+        PosVec.X := (Width - TextSize_.x) / 2;
       end;
       if CurrentFont.texture.id <> 0 then
-        DrawTextEx(CurrentFont, PAnsiChar(Line.Text), Vector2Create(Line.XPos, ScreenY), FontSize, Line.Spacing, TxtColor);
+        DrawTextEx(CurrentFont, pansichar(Line.Text), PosVec, FontSize, Line.Spacing, TxtColor);
     end;
   end;
-
   for i := 0 to Length(FRenderer.Images) - 1 do
   begin
     Img := FRenderer.Images[i];
@@ -613,12 +606,8 @@ begin
       DrawTexturePro(Img.Texture, SrcRect, DstRect, Vector2Create(0, 0), 0, WHITE);
     end;
   end;
-
   EndScissorMode();
-
-  // Прогресс-бар
-  if FRenderer.MaxScroll > 0.0 then
-    Progress := FRenderer.ScrollY / FRenderer.MaxScroll
+  if FRenderer.MaxScroll > 0.0 then Progress := FRenderer.ScrollY / FRenderer.MaxScroll
   else
     Progress := 0.0;
   BarH := 6.0;
@@ -628,17 +617,18 @@ begin
   DrawRectangle(0, Round(BarY), Round(FillW), Round(BarH), FProgressColor);
 end;
 
-function TFB2Reader.ParseInternal(const FileName: string; var Title_, Author_: string): TFB2ElementArray;
+function TFB2Reader.ParseInternal(const FileName: string;
+  var Title_, Author_: string): TFB2ElementArray;
 var
   Content, RawTag, TagName, AttrVal, BinId, BinData: string;
-  i, j, k, PEnd, BStart, BEnd, idx: Integer;
-  InBody: Boolean;
-  InTitle: Boolean;
-  SectDepth: Integer;
+  i, j, k, PEnd, BStart, BEnd, idx: integer;
+  InBody: boolean;
+  InTitle: boolean;
+  SectDepth: integer;
   Elem: TFB2Element;
   FS: TFileStream;
   BinMap: TBinaryList;
-  CoverPos, ImgPos, HrefPos, CoverIdEndPos: Integer;
+  CoverPos, ImgPos, HrefPos, CoverIdEndPos: integer;
   CoverID: string;
   CoverTexture: TTexture2D;
 begin
@@ -660,6 +650,7 @@ begin
     end;
     ConvertEncodingIfNeeded(Content);
     Content := StringReplace(Content, #0, '', [rfReplaceAll]);
+
     // <binary>
     j := 1;
     while j <= Length(Content) do
@@ -693,7 +684,9 @@ begin
                 BinMap[High(BinMap)].Id := BinId;
                 BinMap[High(BinMap)].Data := BinData;
               end;
-            end else Break;
+            end
+            else
+              Break;
           end;
         end;
       end;
@@ -701,6 +694,7 @@ begin
       if j <= 0 then Break;
       Inc(j, 9);
     end;
+
     // Обложка
     CoverPos := Pos('<coverpage>', Content);
     if CoverPos > 0 then
@@ -735,6 +729,7 @@ begin
         end;
       end;
     end;
+
     // Метаданные
     j := Pos('<book-title>', Content);
     if j > 0 then
@@ -747,14 +742,18 @@ begin
     if j > 0 then
     begin
       k := Pos('</first-name>', Content, j);
-      if k > j then Author_ := DecodeXMLEntities(Trim(Copy(Content, j + Length('<first-name>'), k - j - Length('<first-name>')))) + ' ';
+      if k > j then Author_ := DecodeXMLEntities(
+          Trim(Copy(Content, j + Length('<first-name>'), k - j - Length('<first-name>')))) + ' ';
       j := Pos('<last-name>', Content);
       if j > 0 then
       begin
         k := Pos('</last-name>', Content, j);
-        if k > j then Author_ := Author_ + DecodeXMLEntities(Trim(Copy(Content, j + Length('<last-name>'), k - j - Length('<last-name>'))));
+        if k > j then Author_ := Author_ +
+            DecodeXMLEntities(Trim(Copy(Content, j + Length('<last-name>'), k -
+            j - Length('<last-name>'))));
       end;
     end;
+
     // <body>
     j := Pos('<body>', Content);
     if j = 0 then j := Pos('<body ', Content);
@@ -769,10 +768,10 @@ begin
       begin
         k := Pos('>', Content, j);
         if k = 0 then Break;
-        RawTag := Trim(Copy(Content, j+1, k-j-1));
+        RawTag := Trim(Copy(Content, j + 1, k - j - 1));
         if Pos('/', RawTag) = 1 then
         begin
-          TagName := Trim(Copy(RawTag, 2, Length(RawTag)-1));
+          TagName := Trim(Copy(RawTag, 2, Length(RawTag) - 1));
           if TagName = 'section' then Dec(SectDepth);
           if TagName = 'body' then InBody := False;
           if TagName = 'title' then InTitle := False;
@@ -781,7 +780,8 @@ begin
         begin
           TagName := '';
           i := 1;
-          while (i <= Length(RawTag)) and (RawTag[i] <> ' ') and (RawTag[i] <> '/') and (RawTag[i] <> '>') do
+          while (i <= Length(RawTag)) and (RawTag[i] <> ' ') and (RawTag[i] <> '/') and
+            (RawTag[i] <> '>') do
           begin
             TagName := TagName + RawTag[i];
             Inc(i);
@@ -789,7 +789,9 @@ begin
           if TagName = 'binary' then
           begin
             BEnd := FindSubStr('</binary>', Content, j);
-            if BEnd > 0 then j := BEnd + Length('</binary>') - 1 else Break;
+            if BEnd > 0 then j := BEnd + Length('</binary>') - 1
+            else
+              Break;
           end
           else if TagName = 'image' then
           begin
@@ -818,8 +820,8 @@ begin
                       Result[High(Result)].ImageLoaded := (Result[High(Result)].ImageTex.id <> 0);
                       if Result[High(Result)].ImageLoaded then
                       begin
-                        Result[High(Result)].ImgW := Result[High(Result)].ImageTex.width;
-                        Result[High(Result)].ImgH := Result[High(Result)].ImageTex.height;
+                        Result[High(Result)].ImgW := Result[High(Result)].ImageTex.Width;
+                        Result[High(Result)].ImgH := Result[High(Result)].ImageTex.Height;
                       end
                       else
                       begin
@@ -839,7 +841,7 @@ begin
             Elem := Default(TFB2Element);
             Elem.ElemType := etTitle;
             Elem.Indent := SectDepth;
-            SetLength(Result, Length(Result)+1);
+            SetLength(Result, Length(Result) + 1);
             Result[High(Result)] := Elem;
           end
           else if TagName = 'subtitle' then
@@ -847,21 +849,21 @@ begin
             Elem := Default(TFB2Element);
             Elem.ElemType := etSubtitle;
             Elem.Indent := SectDepth;
-            SetLength(Result, Length(Result)+1);
+            SetLength(Result, Length(Result) + 1);
             Result[High(Result)] := Elem;
           end
           else if TagName = 'poem' then
           begin
             Elem := Default(TFB2Element);
             Elem.ElemType := etEmptyLine;
-            SetLength(Result, Length(Result)+1);
+            SetLength(Result, Length(Result) + 1);
             Result[High(Result)] := Elem;
           end
           else if TagName = 'stanza' then
           begin
             Elem := Default(TFB2Element);
             Elem.ElemType := etEmptyLine;
-            SetLength(Result, Length(Result)+1);
+            SetLength(Result, Length(Result) + 1);
             Result[High(Result)] := Elem;
           end
           else if TagName = 'v' then
@@ -869,7 +871,7 @@ begin
             Elem := Default(TFB2Element);
             Elem.ElemType := etVerse;
             Elem.Indent := 0;
-            SetLength(Result, Length(Result)+1);
+            SetLength(Result, Length(Result) + 1);
             Result[High(Result)] := Elem;
           end
           else if TagName = 'emphasis' then
@@ -877,22 +879,24 @@ begin
             Elem := Default(TFB2Element);
             Elem.ElemType := etEmphasis;
             Elem.Indent := 0;
-            SetLength(Result, Length(Result)+1);
+            SetLength(Result, Length(Result) + 1);
             Result[High(Result)] := Elem;
           end
           else if TagName = 'p' then
           begin
             Elem := Default(TFB2Element);
-            if InTitle then Elem.ElemType := etTitle else Elem.ElemType := etParagraph;
+            if InTitle then Elem.ElemType := etTitle
+            else
+              Elem.ElemType := etParagraph;
             Elem.Indent := SectDepth;
-            SetLength(Result, Length(Result)+1);
+            SetLength(Result, Length(Result) + 1);
             Result[High(Result)] := Elem;
           end
           else if TagName = 'empty-line' then
           begin
             Elem := Default(TFB2Element);
             Elem.ElemType := etEmptyLine;
-            SetLength(Result, Length(Result)+1);
+            SetLength(Result, Length(Result) + 1);
             Result[High(Result)] := Elem;
           end
           else if TagName = 'section' then Inc(SectDepth);
@@ -905,23 +909,27 @@ begin
         begin
           k := j;
           while (k <= Length(Content)) and (Content[k] <> '<') do Inc(k);
-          if Result[High(Result)].ElemType in [etTitle, etSubtitle, etParagraph, etVerse, etEmphasis] then
-            Result[High(Result)].Text := Result[High(Result)].Text + DecodeXMLEntities(Copy(Content, j, k-j));
+          if Result[High(Result)].ElemType in [etTitle, etSubtitle, etParagraph,
+            etVerse, etEmphasis] then
+            Result[High(Result)].Text := Result[High(Result)].Text +
+              DecodeXMLEntities(Copy(Content, j, k - j));
           j := k;
         end
-        else Inc(j);
+        else
+          Inc(j);
       end;
     end;
+
     // Вставляем обложку в начало
     if CoverTexture.id <> 0 then
     begin
       SetLength(Result, Length(Result) + 1);
-      for idx := Length(Result) - 1 downto 1 do Result[idx] := Result[idx-1];
+      for idx := Length(Result) - 1 downto 1 do Result[idx] := Result[idx - 1];
       Result[0].ElemType := etCover;
       Result[0].ImageTex := CoverTexture;
       Result[0].ImageLoaded := True;
-      Result[0].ImgW := CoverTexture.width;
-      Result[0].ImgH := CoverTexture.height;
+      Result[0].ImgW := CoverTexture.Width;
+      Result[0].ImgH := CoverTexture.Height;
     end;
   except
     on E: Exception do WriteLn('Parse error: ', E.Message);
@@ -933,15 +941,16 @@ begin
   Result := FRenderer.Chapters;
 end;
 
-procedure TFB2Reader.LayoutInternal(Width: Integer);
+// ИСПРАВЛЕНИЕ 3: Динамический расчет высоты строки (FontSize * 1.35)
+procedure TFB2Reader.LayoutInternal(Width: integer);
 var
-  i, wc: Integer;
+  i, wc: integer;
   Words: TStringList;
   CurLine, LineText: string;
   LineSize: TVector2;
-  CurY: Single;
+  CurY: single;
   Elem: TFB2Element;
-  FontSize, DefSpacing, JustifySpacing, TargetWidth, MeasuredWidth: Single;
+  FontSize, DefSpacing, JustifySpacing, TargetWidth, MeasuredWidth, LineStep: single;
   CurrentFont: TFont;
 begin
   Words := TStringList.Create;
@@ -954,14 +963,13 @@ begin
   SetLength(FRenderer.Lines, 0);
   SetLength(FRenderer.Images, 0);
   SetLength(FRenderer.Chapters, 0);
+
   for i := 0 to Length(FRenderer.Elements) - 1 do
   begin
     Elem := FRenderer.Elements[i];
     CurLine := '';
-    case Elem.ElemType of
-      etTitle, etSubtitle, etVerse, etEmphasis: FontSize := FONT_SIZE;
-      else FontSize := FONT_SIZE;
-    end;
+    FontSize := FONT_SIZE;
+
     if (Elem.ElemType = etTitle) or (Elem.ElemType = etSubtitle) then
     begin
       if (Elem.ElemType = etTitle) and (Trim(Elem.Text) <> '') then
@@ -972,92 +980,117 @@ begin
         FRenderer.Chapters[High(FRenderer.Chapters)].StartY := CurY;
       end;
       if Elem.ElemType = etTitle then CurrentFont := FRenderer.TitleFont
-      else CurrentFont := FRenderer.SubtitleFont;
+      else
+        CurrentFont := FRenderer.SubtitleFont;
+
+      // НАДЕЖНЫЙ РАСЧЕТ ВЫСОТЫ СТРОКИ
+      LineStep := FontSize * 1.35;
+      if LineStep < 20.0 then LineStep := 20.0;
+
       Words.DelimitedText := Elem.Text;
       wc := 0;
       while wc < Words.Count do
       begin
         LineText := CurLine + Words[wc];
-        LineSize := MeasureTextEx(CurrentFont, PAnsiChar(LineText), FontSize, DefSpacing);
+        LineSize := MeasureTextEx(CurrentFont, pansichar(LineText), FontSize, DefSpacing);
         if (CurLine <> '') and (LineSize.x > TargetWidth - 20) then
         begin
-          SetLength(FRenderer.Lines, Length(FRenderer.Lines)+1);
+          SetLength(FRenderer.Lines, Length(FRenderer.Lines) + 1);
           FRenderer.Lines[High(FRenderer.Lines)].Text := CurLine;
           FRenderer.Lines[High(FRenderer.Lines)].YPos := CurY;
           FRenderer.Lines[High(FRenderer.Lines)].ElemType := Elem.ElemType;
           FRenderer.Lines[High(FRenderer.Lines)].XPos := PADDING_X;
           FRenderer.Lines[High(FRenderer.Lines)].Spacing := DefSpacing;
-          CurY := CurY + LINE_HEIGHT + 4;
+          FRenderer.Lines[High(FRenderer.Lines)].LineHeight := LineStep; // <-- СОХРАНЯЕМ
+
+          CurY := CurY + LineStep; // <-- ИСПОЛЬЗУЕМ НАДЕЖНЫЙ ШАГ
           CurLine := Words[wc] + ' ';
         end
-        else CurLine := LineText + ' ';
+        else
+          CurLine := LineText + ' ';
         Inc(wc);
       end;
       if CurLine <> '' then
       begin
-        SetLength(FRenderer.Lines, Length(FRenderer.Lines)+1);
+        SetLength(FRenderer.Lines, Length(FRenderer.Lines) + 1);
         FRenderer.Lines[High(FRenderer.Lines)].Text := CurLine;
         FRenderer.Lines[High(FRenderer.Lines)].YPos := CurY;
         FRenderer.Lines[High(FRenderer.Lines)].ElemType := Elem.ElemType;
         FRenderer.Lines[High(FRenderer.Lines)].XPos := PADDING_X;
         FRenderer.Lines[High(FRenderer.Lines)].Spacing := DefSpacing;
-        CurY := CurY + LINE_HEIGHT + 4;
+        FRenderer.Lines[High(FRenderer.Lines)].LineHeight := LineStep; // <-- СОХРАНЯЕМ
+
+        CurY := CurY + LineStep; // <-- ИСПОЛЬЗУЕМ НАДЕЖНЫЙ ШАГ
       end;
       CurY := CurY + 8;
     end
-    else if (Elem.ElemType = etParagraph) or (Elem.ElemType = etVerse) or (Elem.ElemType = etEmphasis) then
+    else if (Elem.ElemType = etParagraph) or (Elem.ElemType = etVerse) or
+      (Elem.ElemType = etEmphasis) then
     begin
       CurrentFont := FRenderer.Font;
       Words.DelimitedText := Elem.Text;
       if Words.Count > 0 then
       begin
+        // НАДЕЖНЫЙ РАСЧЕТ ВЫСОТЫ СТРОКИ
+        LineStep := FontSize * 1.35;
+        if LineStep < 20.0 then LineStep := 20.0;
+
         wc := 0;
         while wc < Words.Count do
         begin
           LineText := CurLine + Words[wc];
-          LineSize := MeasureTextEx(CurrentFont, PAnsiChar(LineText), FontSize, DefSpacing);
+          LineSize := MeasureTextEx(CurrentFont, pansichar(LineText), FontSize, DefSpacing);
           if (CurLine <> '') and (LineSize.x > TargetWidth) then
           begin
-            SetLength(FRenderer.Lines, Length(FRenderer.Lines)+1);
+            SetLength(FRenderer.Lines, Length(FRenderer.Lines) + 1);
             FRenderer.Lines[High(FRenderer.Lines)].Text := CurLine;
             FRenderer.Lines[High(FRenderer.Lines)].YPos := CurY;
             FRenderer.Lines[High(FRenderer.Lines)].ElemType := Elem.ElemType;
             FRenderer.Lines[High(FRenderer.Lines)].XPos := PADDING_X;
-            MeasuredWidth := MeasureTextEx(CurrentFont, PAnsiChar(CurLine), FontSize, DefSpacing).x;
+            FRenderer.Lines[High(FRenderer.Lines)].LineHeight := LineStep; // <-- СОХРАНЯЕМ
+
+            MeasuredWidth := MeasureTextEx(CurrentFont, pansichar(CurLine), FontSize, DefSpacing).x;
             if (MeasuredWidth < TargetWidth) and (Length(CurLine) > 6) then
             begin
               JustifySpacing := DefSpacing + (TargetWidth - MeasuredWidth) / (Length(CurLine) - 1);
               if JustifySpacing > DefSpacing * 2.5 then JustifySpacing := DefSpacing * 2.5;
             end
-            else JustifySpacing := DefSpacing;
+            else
+              JustifySpacing := DefSpacing;
             FRenderer.Lines[High(FRenderer.Lines)].Spacing := JustifySpacing;
-            CurY := CurY + LINE_HEIGHT;
+
+            CurY := CurY + LineStep; // <-- ИСПОЛЬЗУЕМ НАДЕЖНЫЙ ШАГ
             CurLine := Words[wc] + ' ';
           end
-          else CurLine := LineText + ' ';
+          else
+            CurLine := LineText + ' ';
           Inc(wc);
         end;
         if CurLine <> '' then
         begin
-          SetLength(FRenderer.Lines, Length(FRenderer.Lines)+1);
+          SetLength(FRenderer.Lines, Length(FRenderer.Lines) + 1);
           FRenderer.Lines[High(FRenderer.Lines)].Text := CurLine;
           FRenderer.Lines[High(FRenderer.Lines)].YPos := CurY;
           FRenderer.Lines[High(FRenderer.Lines)].ElemType := Elem.ElemType;
           FRenderer.Lines[High(FRenderer.Lines)].XPos := PADDING_X;
           FRenderer.Lines[High(FRenderer.Lines)].Spacing := DefSpacing;
-          CurY := CurY + LINE_HEIGHT;
+          FRenderer.Lines[High(FRenderer.Lines)].LineHeight := LineStep; // <-- СОХРАНЯЕМ
+
+          CurY := CurY + LineStep; // <-- ИСПОЛЬЗУЕМ НАДЕЖНЫЙ ШАГ
         end;
       end;
     end
     else if Elem.ElemType = etEmptyLine then
     begin
-      CurY := CurY + (LINE_HEIGHT * 0.6);
+      LineStep := FontSize * 1.35;
+      if LineStep < 20.0 then LineStep := 20.0;
+      CurY := CurY + (LineStep * 0.6);
     end
     else if (Elem.ElemType = etImage) or (Elem.ElemType = etCover) then
     begin
       if Elem.ImageLoaded then
       begin
-        SetLength(FRenderer.Images, Length(FRenderer.Images)+1);
+        SetLength(FRenderer.Images, Length(FRenderer.Images) + 1);
         FRenderer.Images[High(FRenderer.Images)].Texture := Elem.ImageTex;
         FRenderer.Images[High(FRenderer.Images)].XPos := (Width - Elem.ImgW) / 2;
         FRenderer.Images[High(FRenderer.Images)].YPos := CurY;

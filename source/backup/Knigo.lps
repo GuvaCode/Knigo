@@ -1,251 +1,258 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectSession>
-    <Version Value="13"/>
+    <Version Value="12"/>
     <BuildModes Active="Default"/>
     <Units>
       <Unit>
         <Filename Value="Knigo.lpr"/>
-        <Loaded Value="True"/>
+        <TopLine Value="101"/>
+        <CursorPos X="32" Y="73"/>
         <UsageCount Value="123"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="62"/>
-        <CursorPos X="27" Y="73"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="readers/readertools.pas"/>
         <UnitName Value="ReaderTools"/>
-        <UsageCount Value="113"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="3" Y="20"/>
+        <UsageCount Value="113"/>
       </Unit>
       <Unit>
         <Filename Value="extra/gui.booknotes.pas"/>
-        <UsageCount Value="74"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="34"/>
         <CursorPos X="32" Y="34"/>
+        <UsageCount Value="74"/>
       </Unit>
       <Unit>
         <Filename Value="extra/gui.bookextra.pas"/>
-        <UsageCount Value="70"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="39"/>
         <CursorPos X="24" Y="39"/>
+        <UsageCount Value="70"/>
       </Unit>
       <Unit>
         <Filename Value="extra/gui.bookchapters.pas"/>
-        <UsageCount Value="60"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="151"/>
         <CursorPos X="42" Y="160"/>
+        <UsageCount Value="60"/>
       </Unit>
       <Unit>
         <Filename Value="extra/gui.booksettings.pas"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="57"/>
         <EditorIndex Value="2"/>
         <CursorPos X="20" Y="3"/>
+        <UsageCount Value="57"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="../../ray4laz/source/raylib.pas"/>
-        <UsageCount Value="60"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1525"/>
         <CursorPos X="23" Y="1542"/>
+        <UsageCount Value="60"/>
       </Unit>
       <Unit>
         <Filename Value="../../00/fictionreader.lpr"/>
-        <UsageCount Value="39"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="16"/>
         <CursorPos X="6" Y="23"/>
+        <UsageCount Value="39"/>
       </Unit>
       <Unit>
         <Filename Value="readers/fb2reader.pas"/>
         <UnitName Value="fb2Reader"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="65"/>
         <EditorIndex Value="3"/>
         <TopLine Value="493"/>
         <CursorPos X="20" Y="522"/>
+        <UsageCount Value="65"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="gui/rlgui.layout.pas"/>
-        <UsageCount Value="50"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="281"/>
         <CursorPos X="24" Y="281"/>
+        <UsageCount Value="50"/>
       </Unit>
       <Unit>
         <Filename Value="gui/rlgui.components.pas"/>
-        <UsageCount Value="55"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="29"/>
         <CursorPos X="32" Y="58"/>
+        <UsageCount Value="55"/>
       </Unit>
       <Unit>
         <Filename Value="../../rlGuiOP/src/ramp.lpr"/>
         <UnitName Value="Project1"/>
-        <UsageCount Value="37"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="33"/>
         <CursorPos X="48" Y="40"/>
+        <UsageCount Value="37"/>
       </Unit>
       <Unit>
         <Filename Value="../../ray4laz/source/extras/raygui.pas"/>
-        <UsageCount Value="36"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="334"/>
         <CursorPos X="20" Y="354"/>
+        <UsageCount Value="36"/>
       </Unit>
       <Unit>
         <Filename Value="../../00/fb2tools.pas"/>
-        <UsageCount Value="34"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="136"/>
         <CursorPos X="5" Y="185"/>
+        <UsageCount Value="34"/>
       </Unit>
       <Unit>
         <Filename Value="../../NewELITE-main/source/engine/global.pas"/>
-        <UsageCount Value="34"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="206"/>
         <CursorPos Y="206"/>
+        <UsageCount Value="34"/>
       </Unit>
       <Unit>
         <Filename Value="../../rlGuiOP/src/gui/rlgui.dialogs.pas"/>
-        <UsageCount Value="5"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="234"/>
         <CursorPos X="18" Y="240"/>
+        <UsageCount Value="5"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/objpas/sysutils/sysstrh.inc"/>
-        <UsageCount Value="3"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="238"/>
         <CursorPos X="10" Y="249"/>
+        <UsageCount Value="3"/>
       </Unit>
       <Unit>
         <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/objpas/classes/classesh.inc"/>
-        <UsageCount Value="17"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="282"/>
         <CursorPos X="44" Y="340"/>
+        <UsageCount Value="17"/>
       </Unit>
       <Unit>
         <Filename Value="../binary/test.fb2"/>
-        <UsageCount Value="9"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="29833" Y="2"/>
+        <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="None"/>
       </Unit>
       <Unit>
         <Filename Value="../../00/125945981.fb2"/>
-        <UsageCount Value="5"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="165"/>
         <CursorPos X="36" Y="197"/>
+        <UsageCount Value="5"/>
+        <DefaultSyntaxHighlighter Value="None"/>
       </Unit>
       <Unit>
         <Filename Value="../../00/874813.fb2"/>
-        <UsageCount Value="5"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="34"/>
         <CursorPos X="25" Y="47"/>
+        <UsageCount Value="5"/>
+        <DefaultSyntaxHighlighter Value="None"/>
       </Unit>
       <Unit>
         <Filename Value="../../00/133835067.fb2"/>
-        <UsageCount Value="5"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="71"/>
         <CursorPos X="27" Y="87"/>
+        <UsageCount Value="5"/>
+        <DefaultSyntaxHighlighter Value="None"/>
       </Unit>
       <Unit>
         <Filename Value="../../../enhanced.pas"/>
         <UnitName Value="Enhanced"/>
-        <UsageCount Value="7"/>
         <EditorIndex Value="-1"/>
+        <UsageCount Value="7"/>
       </Unit>
       <Unit>
         <Filename Value="../../00/epubtools.pas"/>
-        <UsageCount Value="10"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="232"/>
         <CursorPos X="44" Y="346"/>
+        <UsageCount Value="10"/>
       </Unit>
       <Unit>
         <Filename Value="readers/epubtofb2converter.pas"/>
         <UnitName Value="EpubToFb2Converter"/>
-        <UsageCount Value="22"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="711"/>
         <CursorPos X="59" Y="732"/>
+        <UsageCount Value="22"/>
       </Unit>
       <Unit>
         <Filename Value="../binary/book.fb2"/>
-        <UsageCount Value="9"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="75"/>
         <CursorPos X="86" Y="117"/>
+        <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="None"/>
       </Unit>
       <Unit>
         <Filename Value="../binary/1.fb2"/>
-        <UsageCount Value="11"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="55"/>
         <CursorPos X="44" Y="76"/>
+        <UsageCount Value="11"/>
+        <DefaultSyntaxHighlighter Value="None"/>
       </Unit>
       <Unit>
         <Filename Value="readers/MobiToFb2Converter.pas"/>
-        <UsageCount Value="12"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="48"/>
         <CursorPos X="5" Y="873"/>
+        <UsageCount Value="12"/>
       </Unit>
       <Unit>
         <Filename Value="readers/RtfToFb2Converter.pas"/>
-        <UsageCount Value="12"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="387"/>
         <CursorPos X="5" Y="416"/>
+        <UsageCount Value="12"/>
       </Unit>
       <Unit>
         <Filename Value="MobiToFb2Converter.pas"/>
-        <UsageCount Value="12"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="596"/>
         <CursorPos Y="596"/>
+        <UsageCount Value="12"/>
       </Unit>
       <Unit>
         <Filename Value="../binary/2.fb2"/>
-        <UsageCount Value="11"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="308"/>
         <CursorPos X="39" Y="313"/>
+        <UsageCount Value="11"/>
+        <DefaultSyntaxHighlighter Value="None"/>
       </Unit>
       <Unit>
         <Filename Value="epubtofb2converter.pas"/>
         <UnitName Value="EpubToFb2Converter"/>
-        <Loaded Value="True"/>
-        <UsageCount Value="11"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="736"/>
-        <CursorPos X="113" Y="745"/>
+        <CursorPos X="24"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="../../../Application/EpubToFb2Converter.pas"/>
-        <UsageCount Value="10"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="697"/>
         <CursorPos X="5" Y="723"/>
+        <UsageCount Value="10"/>
       </Unit>
       <Unit>
         <Filename Value="../binary/12.fb2"/>
-        <UsageCount Value="10"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="543"/>
         <CursorPos X="16" Y="513"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="None"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="28">
@@ -264,6 +271,10 @@
       <Position>
         <Filename Value="Knigo.lpr"/>
         <Caret Line="9" Column="45"/>
+      </Position>
+      <Position>
+        <Filename Value="Knigo.lpr"/>
+        <Caret Line="3" Column="20" TopLine="25"/>
       </Position>
       <Position>
         <Filename Value="Knigo.lpr"/>
@@ -360,10 +371,6 @@
       <Position>
         <Filename Value="epubtofb2converter.pas"/>
         <Caret Line="1299" Column="5" TopLine="1275"/>
-      </Position>
-      <Position>
-        <Filename Value="epubtofb2converter.pas"/>
-        <Caret Column="24"/>
       </Position>
     </JumpHistory>
     <RunParams>

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#Author: vadim
+#Knigo.exe
+#Rating=1-5
+export PW_WINE_USE="WINE_LG_11-1"
+export PW_PREFIX_NAME="DEFAULT"
+export PORTPROTON_NAME="Knigo"
+export FILE_DESCRIPTION=""
+export FILE_SHA256SUM="029b5b4c0b94e3146f1e4a3131a90ce640f05ae61c66cb189bdaffc25e5e3304"
+export PW_VULKAN_USE="6"

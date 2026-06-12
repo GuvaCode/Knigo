@@ -70,7 +70,7 @@ begin
    FReader.ReloadFonts;
    BgColor := RAYWHITE;
 
-   FCurrentBookFile := '12.mobi'; // Или book.fb2, если пользователь переименовал
+   FCurrentBookFile := '2.mobi'; // Или book.fb2, если пользователь переименовал
 
    // === ЛОГИКА ЗАГРУЗКИ ===
    if LowerCase(ExtractFileExt(FCurrentBookFile)) = '.epub' then

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="/home/vadim/fpcupdeluxe/fpc/bin/x86_64-linux/fpc.sh" Date="1762169289"/>
+  <Params Value="-MObjFPC -Scghi -Cg -O1 -gw3 -gl -l -vewnhibq -Fi/home/vadim/Проекты/Knigo/temp/x86_64-linux -Fl/home/vadim/Проекты/ray4laz/libs/x86_64-linux -Fu/home/vadim/Проекты/Knigo/source/ -Fu/home/vadim/Проекты/Knigo/source/readers -Fu/home/vadim/Проекты/Knigo/source/gui -Fu/home/vadim/Проекты/Knigo/source/extra -Fu/home/vadim/Проекты/ray4laz/package/lib/x86_64-linux -Fu/home/vadim/fpcupdeluxe/lazarus/components/lazutils/lib/x86_64-linux -Fu/home/vadim/fpcupdeluxe/lazarus/packager/units/x86_64-linux -FU/home/vadim/Проекты/Knigo/temp/x86_64-linux/ -FE/home/vadim/Проекты/Knigo/binary/ -o/home/vadim/Проекты/Knigo/binary/Knigo Knigo.lpr"/>
+</CONFIG>

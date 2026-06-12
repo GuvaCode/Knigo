@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="12"/>
+    <Version Value="13"/>
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
@@ -35,6 +35,27 @@
         <PackageName Value="ray4laz"/>
       </Item>
     </RequiredPackages>
+    <Units>
+      <Unit>
+        <Filename Value="Knigo.lpr"/>
+      </Unit>
+      <Unit>
+        <Filename Value="readers/readertools.pas"/>
+        <UnitName Value="ReaderTools"/>
+      </Unit>
+      <Unit>
+        <Filename Value="extra/gui.booknotes.pas"/>
+      </Unit>
+      <Unit>
+        <Filename Value="extra/gui.bookextra.pas"/>
+      </Unit>
+      <Unit>
+        <Filename Value="extra/gui.bookchapters.pas"/>
+      </Unit>
+      <Unit>
+        <Filename Value="extra/gui.booksettings.pas"/>
+      </Unit>
+    </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
@@ -43,7 +64,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="readers;gui;extra;converters"/>
+      <OtherUnitFiles Value="readers;gui;extra"/>
       <UnitOutputDirectory Value="../temp/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
